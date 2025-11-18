@@ -71,27 +71,17 @@ The disc image will be located at `build/<VERSION>_psx/sm64.<VERSION>.iso`. The 
 
 #### Troubleshooting
 
-1. If you get `make: gcc: command not found` or `make: gcc: No such file or directory` although the packages did successfully install, you probably launched the wrong MSYS2. Read the instructions again. The terminal prompt should contain "MINGW32" or "MINGW64" in purple text, and **NOT** "MSYS".
+1. If you get `make: gcc: no suitable C and C++ compiler found`, `make: gcc: command not found`, `make: gcc: No such file or directory` although the packages did successfully install, you probably launched the wrong MSYS2. Read the instructions again. The terminal prompt should contain "MINGW32" or "MINGW64" in purple text, and **NOT** "MSYS".
 2. If you get `Failed to open baserom.us.z64!` you failed to place the baserom in the repository. You can write `ls` to list the files in the current working directory. If you are in the `sm64-psx` directory, make sure you see it here.
 3. If you get `make: *** No targets specified and no makefile found. Stop.`, you are not in the correct directory. Make sure the yellow text in the terminal ends with `sm64-psx`. Use `cd <dir>` to enter the correct directory. If you write `ls` you should see all the project files, including `Makefile` if everything is correct.
 4. If you get any error, be sure MSYS2 packages are up to date by executing `pacman -Syu` and `pacman -Su`. If the MSYS2 window closes immediately after opening it, restart your computer.
 5. Check if mipsel gcc is working by executing `mipsel-none-elf-gcc -v`. If it doesn't work, you either opened the wrong MSYS start menu entry or installed the incorrect gcc package.
 6. When switching between building on other platforms, run `make -C tools clean` first to allow for the tools to recompile on the new platform. This also helps when switching between shells like WSL and MSYS2.
 
-### Debugging
-
-The code can be debugged using `gdb`. On Linux install the `gdb` package and execute `gdb <executable>`. On MSYS2 install by executing `pacman -S winpty gdb` and execute `winpty gdb <executable>`. The `winpty` program makes sure the keyboard works correctly in the terminal. Also consider changing the `-mwindows` compile flag to `-mconsole` to be able to see stdout/stderr as well as be able to press Ctrl+C to interrupt the program. In the Makefile, make sure you compile the sources using `-g` rather than `-O2` to include debugging symbols. See any online tutorial for how to use gdb.
-
-## ROM building
-
-It is possible to build N64 ROMs as well with this repository. See https://github.com/n64decomp/sm64 for instructions.
-
 ## Project Structure
 
 	sm64
 	├── actors: object behaviors, geo layout, and display lists
-	├── asm: handwritten assembly code, rom header
-	│   └── non_matchings: asm for non-matching sections
 	├── assets: animation and demo data
 	│   ├── anims: animation data
 	│   └── demos: demo data
@@ -102,17 +92,17 @@ It is possible to build N64 ROMs as well with this repository. See https://githu
 	├── enhancements: example source modifications
 	├── include: header files
 	├── levels: level scripts, geo layout, and display lists
-	├── lib: SDK library code
-	├── rsp: audio and Fast3D RSP assembly code
+	├── lib: N64 SDK code
 	├── sound: sequences, sound samples, and sound banks
 	├── src: C source code for game
 	│   ├── audio: audio code
 	│   ├── buffers: stacks, heaps, and task buffers
 	│   ├── engine: script processing engines and utils
 	│   ├── game: behaviors and rest of game source
-	│   ├── goddard: Mario intro screen
+	│   ├── goddard: rewritten Mario intro screen
+	│   ├── goddard_og: backup of original Mario intro screen
 	│   ├── menu: title screen and file, act, and debug level selection menus
-	│   └── pc: port code, audio and video renderer
+	│   └── port: port code, audio and video renderer
 	├── text: dialog, level names, act names
 	├── textures: skybox and generic texture data
 	└── tools: build tools
@@ -121,7 +111,3 @@ It is possible to build N64 ROMs as well with this repository. See https://githu
 
 Pull requests are welcome. For major changes, please open an issue first to
 discuss what you would like to change.
-
-Run `clang-format` on your code to ensure it meets the project's coding standards.
-
-Official Discord: https://discord.gg/7bcNTPK
