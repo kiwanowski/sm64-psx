@@ -1,3 +1,4 @@
+#include "PR/os_time.h"
 #include <stdbool.h>
 #include <ultra64.h>
 #include <lib/src/osContInternal.h>
@@ -195,6 +196,10 @@ static s8 analog_raw_to_n64(u8 raw) {
 }
 
 static bool inited = false;
+static bool is_connected = false;
+static bool is_analog = false;
+static bool is_dualshock = false;
+static u64 last_poll_us = 0;
 
 void controller_backend_read(OSContPad* pad, u32 port) {
 	if(!inited) {
@@ -208,22 +213,35 @@ void controller_backend_read(OSContPad* pad, u32 port) {
 	selectPort(port);
 	u8 response[8];
 	int response_len;
-	bool is_analog = false;
-	bool is_dualshock = false;
 
-	static const u8 request_config[] = {CMD_CONFIG_MODE, 0, 1};
-	response_len = exchangePacket(ADDR_CONTROLLER, request_config, response, sizeof(request_config), sizeof(response));
-	if(response_len >= 4) {
-		static const u8 request_analog[] = {CMD_SET_ANALOG, 0, 1, 3};
-		response_len = exchangePacket(ADDR_CONTROLLER, request_analog, response, sizeof(request_analog), sizeof(response));
+	// controllers apparently reset if not polled for a while, so reconfigure if 200ms have passed
+	u64 now_us = osGetTime();
+	if(now_us < last_poll_us || now_us >= last_poll_us + 200'000) {
+		is_connected = false;
+		is_analog = false;
+		is_dualshock = false;
+	}
+	last_poll_us = now_us;
+
+	if(!is_connected) {
+		static const u8 request_config[] = {CMD_CONFIG_MODE, 0, 1};
+		response_len = exchangePacket(ADDR_CONTROLLER, request_config, response, sizeof(request_config), sizeof(response));
 		if(response_len >= 4) {
-			static const u8 request_rumble[] = {CMD_REQUEST_CONFIG, 0, 0, 1, 255, 255, 255, 255};
-			response_len = exchangePacket(ADDR_CONTROLLER, request_rumble, response, sizeof(request_rumble), sizeof(response));
+			static const u8 request_analog[] = {CMD_SET_ANALOG, 0, 1, 3};
+			response_len = exchangePacket(ADDR_CONTROLLER, request_analog, response, sizeof(request_analog), sizeof(response));
 			if(response_len >= 4) {
-				is_dualshock = true;
+				static const u8 request_rumble[] = {CMD_REQUEST_CONFIG, 0, 0, 1, 255, 255, 255, 255};
+				response_len = exchangePacket(ADDR_CONTROLLER, request_rumble, response, sizeof(request_rumble), sizeof(response));
+				if(response_len >= 4) {
+					is_dualshock = true;
+				}
+				is_analog = true;
 			}
-			is_analog = true;
+		} else {
+			pad->errnum = 1;
+			return;
 		}
+		is_connected = true;
 	}
 
 	static u8 request_poll[] = {CMD_POLL, 0, 0, 0};
@@ -235,6 +253,9 @@ void controller_backend_read(OSContPad* pad, u32 port) {
 	}
 	response_len = exchangePacket(ADDR_CONTROLLER, request_poll, response, sizeof(request_poll), sizeof(response));
 	if(response_len < 4) {
+		is_connected = false;
+		is_analog = false;
+		is_dualshock = false;
 		pad->errnum = 1;
 		return;
 	}
