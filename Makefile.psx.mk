@@ -95,6 +95,8 @@ DEF_INC_CFLAGS := $(foreach i,$(INCLUDE_DIRS),-I$(i)) $(C_DEFINES)
 
 ifneq      ($(call find-command,mipsel-none-elf-gcc),)
 	CROSS := mipsel-none-elf-
+else ifneq      ($(call find-command,mipsel-unknown-elf-gcc),)
+	CROSS := mipsel-unknown-elf-
 else ifneq      ($(call find-command,mipsel-linux-gnu-gcc),)
 	CROSS := mipsel-linux-gnu-
 else ifneq      ($(call find-command,mipsel-unknown-linux-gnu-gcc),)
