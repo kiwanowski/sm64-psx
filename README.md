@@ -18,7 +18,7 @@ An original copy of the game is required to extract the assets.
 - Tessellation (up to 2x) to reduce issues with large polygons
 - RSP display lists are compiled just-in-time into a custom display list format that is more compact and faster to process
 - Display list preprocessor that removes commands we won't use and optimizes meshes (TODO: make it fix more things)
-- Mario's animations are compressed (from 580632 to 190324 bytes) and placed in a corner of VRAM rather than being loaded from storage (we don't have the luxury of a cartridge to copy from in the middle of a frame)
+- Mario's animations are compressed (from 580632 to 190324 bytes) and placed in a corner of VRAM rather than being loaded from storage (we don't have the luxury of a fast cartridge to read from in the middle of a frame)
 - Custom profiler
 - Custom texture encoder that quantizes all textures to 4 bits per pixel
 - Translucent circle-texture shadows replaced with subtractive hexagonal shadows, as the PSX doesn't support arbitrary translucency
@@ -48,7 +48,7 @@ An original copy of the game is required to extract the assets.
 ### Linux
 
 1. Build and install the mipsel-none-elf-gcc toolchain. For Arch users, it is available on [AUR](https://aur.archlinux.org/packages/mipsel-none-elf-gcc-git). (You can also install it on your system from https://github.com/malucard/poeng by running `make install-gcc` from there. This may take a long time.)
-2. Clone the repo: `git clone https://github.com/sm64-port/sm64-port.git`, which will create a directory `sm64-port` and then **enter** it `cd sm64-port`.
+2. Clone the repo: `git clone https://github.com/malucard/sm64-psx`, which will create a directory `sm64-port` and then **enter** it `cd sm64-port`.
 3. Place a Super Mario 64 ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, ~~where `VERSION` can be `us`, `jp`, or `eu`~~. (For now, only `us` is supported.)
 4. (Optional) Create a folder named `.local` in the root of the repo and place every track of the soundtrack in it as a .wav file, numbered from 0 to 37 (0.wav, 1.wav, etc).
 5. Run `make` to build. To build the benchmark version without music, run `make BENCH=1`.
@@ -63,7 +63,7 @@ The disc image will be located at `build/<VERSION>_psx/sm64.<VERSION>.iso`. The 
   * Do **NOT** by mistake install the packages called simply `gcc` and `meson`.
 3. Install the mipsel-none-elf-gcc toolchain.
 4. The MSYS2 terminal has a _current working directory_ that initially is `C:\msys64\home\<username>` (home directory). At the prompt, you will see the current working directory in yellow. `~` is an alias for the home directory. You can change the current working directory to `My Documents` by entering `cd /c/Users/<username>/Documents`.
-5. Clone the repo: `git clone https://github.com/malucard/sm64-psx.git`, which will create a directory `sm64-psx` and then **enter** it `cd sm64-psx`.
+5. Clone the repo: `git clone https://github.com/malucard/sm64-psx`, which will create a directory `sm64-psx` and then **enter** it `cd sm64-psx`.
 6. Place a *Super Mario 64* ROM called `baserom.<VERSION>.z64` into the repository's root directory for asset extraction, ~~where `VERSION` can be `us`, `jp`, or `eu`~~. (For now, only `us` is supported.)
 7. (Optional) Create a folder named `.local` in the root of the repo and place every track of the soundtrack in it as a .wav file, numbered from 0 to 37 (0.wav, 1.wav, etc).
 8. Run `make` to build. To build the benchmark version, run `make BENCH=1`.
