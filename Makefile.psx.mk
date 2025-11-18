@@ -97,6 +97,8 @@ ifneq      ($(call find-command,mipsel-none-elf-gcc),)
 	CROSS := mipsel-none-elf-
 else ifneq      ($(call find-command,mipsel-linux-gnu-gcc),)
 	CROSS := mipsel-linux-gnu-
+else ifneq      ($(call find-command,mipsel-unknown-linux-gnu-gcc),)
+	CROSS := mipsel-unknown-linux-gnu-
 else ifneq      ($(call find-command,mipsel-elf-gcc),)
 	CROSS := mipsel-elf-
 else
