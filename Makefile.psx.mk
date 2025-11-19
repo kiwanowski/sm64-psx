@@ -295,10 +295,15 @@ $(PNGS_WITH_BLACK_TRANSPARENCY:%.png=$(BUILD_DIR)/%.fulldata): $(BUILD_DIR)/%.fu
 >	$(V)./tools/convert_image_psx 4 $< $@
 
 ALL_PNGS := $(foreach png,$(filter-out %/cake.png %/cake_eu.png %/skyboxes/%.png,$(filter %.png,$(file <.assets-local.txt))),$(wildcard $(png))) dualshock_graphic.png
+ALL_FULLDATAS := $(ALL_PNGS:%.png=$(BUILD_DIR)/%.fulldata)
 
-$(BUILD_DIR)/tex_pack: $(ALL_PNGS:%.png=$(BUILD_DIR)/%.fulldata) tools/pack_textures.py
+$(BUILD_DIR)/tex_pack: $(ALL_FULLDATAS) tools/pack_textures.py
 >	@$(PRINT) "$(GREEN)Packing all images$(NO_COL)\n"
->	$(V)$(PYTHON) tools/pack_textures.py $@.tmp $(filter-out tools/pack_textures.py,$^)
+>	$(V)rm -f $(BUILD_DIR)/fulldata_list.txt
+>	$(V)for fulldata in $(ALL_FULLDATAS); do \
+>		echo $$fulldata >> $(BUILD_DIR)/fulldata_list.txt ;\
+>	done
+>	$(V)$(PYTHON) tools/pack_textures.py $@.tmp $(BUILD_DIR)/fulldata_list.txt
 >	$(V)for png in $(ALL_PNGS); do \
 >		hexdump -v -e '1/1 "0x%X,"' $(BUILD_DIR)/$${png%.png}.texheader > $(BUILD_DIR)/$${png%.png}.inc.c ;\
 >	done
