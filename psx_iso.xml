@@ -9,7 +9,7 @@
 			publisher = "SM64"
 			data_preparer = "MKPSXISO"
 		/>
-		<!--license file="LICENSEA.DAT"/-->
+		<!--license file="../../LICENSEA.DAT"/-->
 		<directory_tree>
 			<file name="SYSTEM.CNF" type="data" source="../../system.cnf"/>
 			<file name="SM64.EXE" type="data" source="sm64.exe"/>
